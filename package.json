@@ -1,0 +1,21 @@
+{
+  "name": "udaan16-event-data-uploader",
+  "version": "1.0.0",
+  "description": "Udaan 16 Event Data Uploader",
+  "main": "app/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Udaan",
+    "Event",
+    "Data",
+    "Uploader"
+  ],
+  "author": "Dhruvin Gandhi",
+  "license": "ISC",
+  "devDependencies": {
+    "polybuild": "^1.1.0",
+    "polyserve": "^0.7.1"
+  }
+}
