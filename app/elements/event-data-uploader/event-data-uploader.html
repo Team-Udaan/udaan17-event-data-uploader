@@ -1,6 +1,5 @@
 <!-- Iron elements -->
 <link rel="import" href="../../vendor/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../vendor/iron-ajax/iron-ajax.html">
 
 <!-- Paper elements -->
 <link rel="import" href="../../vendor/paper-header-panel/paper-header-panel.html">
@@ -125,14 +124,6 @@
 
     </paper-header-panel>
 
-    <iron-ajax
-      id="xhr"
-      url="{{url}}"
-      method="POST"
-      handle-as="json"
-      on-response="_responseHandler"
-      on-error="_errorHandler"></iron-ajax>
-
   </template>
 
   <script>
@@ -140,11 +131,6 @@
       is: "event-data-uploader",
 
       properties: {
-
-        url: {
-          type: String,
-          value: ""
-        },
 
         departmentName: String,
         eventName: String,
@@ -156,11 +142,25 @@
         round3Description: String,
         eventManagers: String,
         contactInfo: String,
-        notes: String
+        notes: String,
+
+        eventData: {
+          type: Object,
+          value: function () {
+            return {
+              createOrUpdate: function (event) {
+                if (!localStorage.getItem('eventData'))
+                  localStorage.setItem('eventData', JSON.stringify([event]));
+                else
+                  localStorage.setItem('eventData', JSON.stringify(JSON.parse(localStorage.getItem('eventData')).push(event)));
+              }
+            }
+          }
+        }
       },
 
       _submitHandler: function () {
-        this.$.xhr.generateRequest({
+        this.eventData.createOrUpdate({
           departmentName: this.departmentName,
           eventName: this.eventName,
           participants: this.participants,
@@ -173,6 +173,7 @@
           contactInfo: this.contactInfo,
           notes: this.notes
         });
+        this._resetHandler();
       },
 
       _resetHandler: function () {
@@ -187,18 +188,16 @@
         this.eventManagers = "";
         this.contactInfo = "";
         this.notes = "";
-      },
-
-      _responseHandler: function (event) {
-        alert('Event uploaded successfully.');
-        this._resetHandler();
-      },
-
-      _errorHandler: function (event) {
-        alert('Could not upload data. Please try again.');
       }
 
     });
+
+    window.downloadEventData = function () {
+      var a = document.createElement('a');
+      a.download = 'eventData.json';
+      a.href = 'data://text/json;charset=utf-8,' + encodeURIComponent(localStorage.getItem('eventData'));
+      a.click();
+    };
   </script>
 
 </dom-module>
