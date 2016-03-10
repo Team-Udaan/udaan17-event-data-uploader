@@ -1,5 +1,6 @@
 <!-- Iron elements -->
 <link rel="import" href="../../vendor/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../vendor/iron-ajax/iron-ajax.html">
 
 <!-- Paper elements -->
 <link rel="import" href="../../vendor/paper-header-panel/paper-header-panel.html">
@@ -59,52 +60,52 @@
             <div id="top-row" class="layout horizontal">
 
               <!-- Department Name -->
-              <paper-dropdown-menu id="department-name" label="Department Name">
+              <paper-dropdown-menu id="dropdown" label="Department Name" value="{{departmentName}}">
                 <paper-listbox class="dropdown-content">
-                  <paper-item>SkyScrapers</paper-item>
-                  <paper-item>FabFacturers</paper-item>
-                  <paper-item>Machinists</paper-item>
-                  <paper-item>Rezonizers</paper-item>
-                  <paper-item>Key Coders</paper-item>
-                  <paper-item>Embeddrones</paper-item>
+                  <paper-item label="SkyScrapers">SkyScrapers</paper-item>
+                  <paper-item label="FabFacturers">FabFacturers</paper-item>
+                  <paper-item label="Machinists">Machinists</paper-item>
+                  <paper-item label="Rezonizers">Rezonizers</paper-item>
+                  <paper-item label="Key Coders">Key Coders</paper-item>
+                  <paper-item label="Embeddrones">Embeddrones</paper-item>
                 </paper-listbox>
               </paper-dropdown-menu>
 
               <!-- Event Name -->
-              <paper-input id="event-name" label="Event Name"></paper-input>
+              <paper-input label="Event Name" value="{{eventName}}"></paper-input>
 
               <!-- Participants -->
-              <paper-input id="participants" label="Participants"></paper-input>
+              <paper-input label="Participants" value="{{participants}}"></paper-input>
 
               <!-- Fees -->
-              <paper-input id="fees" label="Fees"></paper-input>
+              <paper-input label="Fees" value="{{fees}}"></paper-input>
 
             </div>
 
             <br>
 
             <!-- Event Description -->
-            <paper-textarea id="event-description" label="Event Description"></paper-textarea>
+            <paper-textarea label="Event Description" value="{{eventDescription}}"></paper-textarea>
 
             <br>
 
             <!-- Round Descriptions -->
-            <paper-textarea id="round-1-description" label="Round 1 Description"></paper-textarea>
-            <paper-textarea id="round-2-description" label="Round 2 Description"></paper-textarea>
-            <paper-textarea id="round-3-description" label="Round 3 Description"></paper-textarea>
+            <paper-textarea label="Round 1 Description" value="{{round1Description}}"></paper-textarea>
+            <paper-textarea label="Round 2 Description" value="{{round2Description}}"></paper-textarea>
+            <paper-textarea label="Round 3 Description" value="{{round3Description}}"></paper-textarea>
 
             <br>
 
             <div class="layout horizontal">
 
               <!-- Event Managers -->
-              <paper-textarea id="event-managers" label="Event Managers" class="flex"></paper-textarea>
+              <paper-textarea label="Event Managers" class="flex" value="{{eventManagers}}"></paper-textarea>
 
               <!-- Contact Info -->
-              <paper-textarea id="contact-info" label="Contact Info" class="flex"></paper-textarea>
+              <paper-textarea label="Contact Info" class="flex" value="{{contactInfo}}"></paper-textarea>
 
               <!-- Notes -->
-              <paper-textarea id="notes" label="Notes" class="flex"></paper-textarea>
+              <paper-textarea label="Notes" class="flex" value="{{notes}}"></paper-textarea>
 
             </div>
 
@@ -112,8 +113,8 @@
 
           <div class="card-actions layout horizontal">
             <div class="flex"></div>
-            <paper-button>Reset</paper-button>
-            <paper-button>Submit</paper-button>
+            <paper-button on-click="_resetHandler">Reset</paper-button>
+            <paper-button on-click="_submitHandler">Submit</paper-button>
           </div>
 
         </paper-card>
@@ -124,11 +125,79 @@
 
     </paper-header-panel>
 
+    <iron-ajax
+      id="xhr"
+      url="{{url}}"
+      method="POST"
+      handle-as="json"
+      on-response="_responseHandler"
+      on-error="_errorHandler"></iron-ajax>
+
   </template>
 
   <script>
     Polymer({
-      is: "event-data-uploader"
+      is: "event-data-uploader",
+
+      properties: {
+
+        url: {
+          type: String,
+          value: ""
+        },
+
+        departmentName: String,
+        eventName: String,
+        participants: String,
+        fees: String,
+        eventDescription: String,
+        round1Description: String,
+        round2Description: String,
+        round3Description: String,
+        eventManagers: String,
+        contactInfo: String,
+        notes: String
+      },
+
+      _submitHandler: function () {
+        this.$.xhr.generateRequest({
+          departmentName: this.departmentName,
+          eventName: this.eventName,
+          participants: this.participants,
+          fees: this.fees,
+          eventDescription: this.eventDescription,
+          round1Description: this.round1Description,
+          round2Description: this.round2Description,
+          round3Description: this.round3Description,
+          eventManagers: this.eventManagers,
+          contactInfo: this.contactInfo,
+          notes: this.notes
+        });
+      },
+
+      _resetHandler: function () {
+        this.$.dropdown._selectedItemChanged(null);
+        this.eventName = "";
+        this.participants = "";
+        this.fees = "";
+        this.eventDescription = "";
+        this.round1Description = "";
+        this.round2Description = "";
+        this.round3Description = "";
+        this.eventManagers = "";
+        this.contactInfo = "";
+        this.notes = "";
+      },
+
+      _responseHandler: function (event) {
+        alert('Event uploaded successfully.');
+        this._resetHandler();
+      },
+
+      _errorHandler: function (event) {
+        alert('Could not upload data. Please try again.');
+      }
+
     });
   </script>
 
