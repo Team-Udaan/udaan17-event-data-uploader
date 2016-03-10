@@ -61,14 +61,17 @@
               <!-- Department Name -->
               <paper-dropdown-menu id="dropdown" label="Department Name" value="{{departmentName}}">
                 <paper-listbox class="dropdown-content">
-                  <paper-item label="SkyScrapers">SkyScrapers</paper-item>
-                  <paper-item label="FabFacturers">FabFacturers</paper-item>
-                  <paper-item label="Machinists">Machinists</paper-item>
-                  <paper-item label="Rezonizers">Rezonizers</paper-item>
-                  <paper-item label="Key Coders">Key Coders</paper-item>
-                  <paper-item label="Embeddrones">Embeddrones</paper-item>
+                  <paper-item label="SkyScrapers">Civil</paper-item>
+                  <paper-item label="FabFacturers">Prod</paper-item>
+                  <paper-item label="Machinists">Mech</paper-item>
+                  <paper-item label="Rezonizers">EE</paper-item>
+                  <paper-item label="Key Coders">CPIT</paper-item>
+                  <paper-item label="Embeddrones">ETEL</paper-item>
                 </paper-listbox>
               </paper-dropdown-menu>
+
+              <!-- Tech Non tech -->
+              <paper-input label="T/N" maxlength="1" value="{{techNonTech}}"></paper-input>
 
               <!-- Event Name -->
               <paper-input label="Event Name" value="{{eventName}}"></paper-input>
@@ -133,6 +136,7 @@
       properties: {
 
         departmentName: String,
+        techNonTech: String,
         eventName: String,
         participants: String,
         fees: String,
@@ -160,8 +164,15 @@
       },
 
       _submitHandler: function () {
+
+        if (!this.eventName) {
+          alert('Event Name is mandatory.');
+          return;
+        }
+
         this.eventData.createOrUpdate({
           departmentName: this.departmentName,
+          techNonTech: this.techNonTech,
           eventName: this.eventName,
           participants: this.participants,
           fees: this.fees,
@@ -178,6 +189,7 @@
 
       _resetHandler: function () {
         this.$.dropdown._selectedItemChanged(null);
+        this.techNonTech = "";
         this.eventName = "";
         this.participants = "";
         this.fees = "";
@@ -197,6 +209,10 @@
       a.download = 'eventData.json';
       a.href = 'data://text/json;charset=utf-8,' + encodeURIComponent(localStorage.getItem('eventData'));
       a.click();
+    };
+
+    window.clearEventData = function () {
+      localStorage.clear();
     };
   </script>
 
