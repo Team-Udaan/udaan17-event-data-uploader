@@ -153,10 +153,13 @@
           value: function () {
             return {
               createOrUpdate: function (event) {
-                if (!localStorage.getItem('eventData'))
+                var eventData = JSON.parse(localStorage.getItem('eventData'));
+                if (!eventData)
                   localStorage.setItem('eventData', JSON.stringify([event]));
-                else
-                  localStorage.setItem('eventData', JSON.stringify(JSON.parse(localStorage.getItem('eventData')).push(event)));
+                else {
+                  eventData.push(event);
+                  localStorage.setItem('eventData', JSON.stringify(eventData));
+                }
               }
             }
           }
