@@ -45,7 +45,7 @@
     <paper-header-panel class="flex">
 
       <paper-toolbar>
-        <div id="title">Udaan 16 Event Data Uploader</div>
+        <div id="title">Udaan 17 Event Data Uploader</div>
       </paper-toolbar>
 
       <div class="layout horizontal center-center">
@@ -58,58 +58,45 @@
 
             <div id="top-row" class="layout horizontal">
 
-              <!-- Department Name -->
-              <paper-dropdown-menu id="dropdown" label="Department Name" value="{{departmentName}}">
-                <paper-listbox class="dropdown-content">
-                  <paper-item label="SkyScrapers">Civil</paper-item>
-                  <paper-item label="FabFacturers">Prod</paper-item>
-                  <paper-item label="Machinists">Mech</paper-item>
-                  <paper-item label="Rezonizers">EE</paper-item>
-                  <paper-item label="Key Coders">CPIT</paper-item>
-                  <paper-item label="Embeddrones">ETEL</paper-item>
-                  <paper-item label="Cultural">Cultural</paper-item>
-                  <paper-item label="TPC">TPC</paper-item>
-                </paper-listbox>
-              </paper-dropdown-menu>
-
-              <!-- Tech Non tech -->
-              <paper-input label="T/N" maxlength="1" value="{{techNonTech}}"></paper-input>
-
               <!-- Event Name -->
-              <paper-input label="Event Name" value="{{eventName}}"></paper-input>
+              <paper-input label="Name" value="{{event.name}}"></paper-input>
 
               <!-- Participants -->
-              <paper-input label="Participants" value="{{participants}}"></paper-input>
+              <paper-input label="Participants" value="{{event.participants}}"></paper-input>
 
               <!-- Fees -->
-              <paper-input label="Fees" value="{{fees}}"></paper-input>
+              <paper-input label="Fees" value="{{event.fees}}"></paper-input>
+
+              <!-- Prizes -->
+              <paper-input label="Prizes" value="{{event.prizes}}"></paper-input>
 
             </div>
 
             <br>
 
             <!-- Event Description -->
-            <paper-textarea label="Event Description" value="{{eventDescription}}"></paper-textarea>
+            <paper-textarea label="Description" value="{{event.description}}"></paper-textarea>
 
             <br>
 
             <!-- Round Descriptions -->
-            <paper-textarea label="Round 1 Description" value="{{round1Description}}"></paper-textarea>
-            <paper-textarea label="Round 2 Description" value="{{round2Description}}"></paper-textarea>
-            <paper-textarea label="Round 3 Description" value="{{round3Description}}"></paper-textarea>
+            <paper-textarea label="Round 1" value="{{event.rounds.0}}"></paper-textarea>
+            <paper-textarea label="Round 2" value="{{event.rounds.1}}"></paper-textarea>
+            <paper-textarea label="Round 3" value="{{event.rounds.2}}"></paper-textarea>
 
             <br>
 
             <div class="layout horizontal">
 
               <!-- Event Managers -->
-              <paper-textarea label="Event Managers" class="flex" value="{{eventManagers}}"></paper-textarea>
+              <paper-textarea label="Managers' Names" class="flex" value="{{event.managers.names}}"></paper-textarea>
 
               <!-- Contact Info -->
-              <paper-textarea label="Contact Info" class="flex" value="{{contactInfo}}"></paper-textarea>
+              <paper-textarea label="Managers' Mobile Numbers" class="flex"
+                              value="{{event.managers.mobileNumbers}}"></paper-textarea>
 
               <!-- Notes -->
-              <paper-textarea label="Notes" class="flex" value="{{notes}}"></paper-textarea>
+              <paper-textarea label="Notes" class="flex" value="{{event.notes}}"></paper-textarea>
 
             </div>
 
@@ -117,7 +104,6 @@
 
           <div class="card-actions layout horizontal">
             <div class="flex"></div>
-            <paper-button on-click="_resetHandler">Reset</paper-button>
             <paper-button on-click="_submitHandler">Submit</paper-button>
           </div>
 
@@ -137,82 +123,69 @@
 
       properties: {
 
-        departmentName: String,
-        techNonTech: String,
-        eventName: String,
-        participants: String,
-        fees: String,
-        eventDescription: String,
-        round1Description: String,
-        round2Description: String,
-        round3Description: String,
-        eventManagers: String,
-        contactInfo: String,
-        notes: String,
-
-        eventData: {
-          type: Object,
+        event: {
+          type: 'object',
           value: function () {
             return {
-              createOrUpdate: function (event) {
-                var eventData = JSON.parse(localStorage.getItem('eventData'));
-                if (!eventData)
-                  localStorage.setItem('eventData', JSON.stringify([event]));
-                else {
-                  eventData.push(event);
-                  localStorage.setItem('eventData', JSON.stringify(eventData));
-                }
-              }
+              name: '',
+              participants: '',
+              fees: '',
+              description: '',
+              prizes: '',
+              rounds: [],
+              managers: {
+                names: '',
+                mobileNumbers: ''
+              },
+              notes: ''
             }
           }
         }
       },
 
       _submitHandler: function () {
+        var events = JSON.parse(localStorage.getItem('events') || '[]'),
+          names = this.event.managers.names.split('\n'),
+          mobileNumbers = this.event.managers.mobileNumbers.split('\n');
 
-        if (!this.eventName) {
-          alert('Event Name is mandatory.');
-          return;
-        }
-
-        this.eventData.createOrUpdate({
-          departmentName: this.departmentName,
-          techNonTech: this.techNonTech,
-          eventName: this.eventName,
-          participants: this.participants,
-          fees: this.fees,
-          eventDescription: this.eventDescription,
-          round1Description: this.round1Description,
-          round2Description: this.round2Description,
-          round3Description: this.round3Description,
-          eventManagers: this.eventManagers,
-          contactInfo: this.contactInfo,
-          notes: this.notes
+        events.push({
+          name: this.event.name,
+          participants: this.event.participants,
+          fees: this.event.fees,
+          description: this.event.description,
+          prizes: this.event.prizes.split(','),
+          rounds: [],
+          managers: names.map(function (name, index) {
+            return {name: name, mobileNumber: mobileNumbers[index]}
+          }),
+          notes: this.event.notes
         });
+        localStorage.setItem('events', JSON.stringify(events));
         this._resetHandler();
       },
 
       _resetHandler: function () {
-        this.$.dropdown._selectedItemChanged(null);
-        this.techNonTech = "";
-        this.eventName = "";
-        this.participants = "";
-        this.fees = "";
-        this.eventDescription = "";
-        this.round1Description = "";
-        this.round2Description = "";
-        this.round3Description = "";
-        this.eventManagers = "";
-        this.contactInfo = "";
-        this.notes = "";
+        this.set('event', {
+          name: '',
+          participants: '',
+          fees: '',
+          description: '',
+          prizes: '',
+          rounds: [],
+          managers: {
+            names: '',
+            mobileNumbers: ''
+          },
+          notes: ''
+        })
       }
 
     });
 
     window.downloadEventData = function () {
       var a = document.createElement('a');
-      a.download = 'eventData.json';
-      a.href = 'data://text/json;charset=utf-8,' + encodeURIComponent(localStorage.getItem('eventData'));
+      a.download = 'events.json';
+      a.href = 'data://text/json;charset=utf-8,' + encodeURIComponent(localStorage.getItem('events'));
       a.click();
     };
 

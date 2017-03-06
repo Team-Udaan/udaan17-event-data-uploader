@@ -1,9 +1,9 @@
 {
-  "name": "udaan16-event-data-uploader",
+  "name": "udaan17-event-data-uploader",
   "authors": [
     "Dhruvin Gandhi <dhruvin2910@gmail.com>"
   ],
-  "description": "Udaan 16 Event Data Uploader",
+  "description": "Udaan 17 Event Data Uploader",
   "main": "app/index.html",
   "moduleType": [],
   "keywords": [
@@ -24,7 +24,7 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.3.1",
-    "paper-elements": "^1.0.7"
+    "polymer": "^1.8.1",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7"
   }
 }

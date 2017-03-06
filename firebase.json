@@ -1,9 +1,0 @@
-{
-  "firebase": "udaan16-edl",
-  "public": "app",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
-}

@@ -1,7 +1,7 @@
 {
-  "name": "udaan16-event-data-uploader",
+  "name": "udaan17-event-data-uploader",
   "version": "1.0.0",
-  "description": "Udaan 16 Event Data Uploader",
+  "description": "Udaan 17 Event Data Uploader",
   "main": "app/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
