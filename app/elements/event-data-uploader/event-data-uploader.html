@@ -59,7 +59,7 @@
             <div id="top-row" class="layout horizontal">
 
               <!-- Event Name -->
-              <paper-input label="Name" value="{{event.name}}"></paper-input>
+              <paper-input id="name" label="Name" value="{{event.name}}"></paper-input>
 
               <!-- Participants -->
               <paper-input label="Participants" value="{{event.participants}}"></paper-input>
@@ -93,10 +93,7 @@
 
               <!-- Contact Info -->
               <paper-textarea label="Managers' Mobile Numbers" class="flex"
-                              value="{{event.managers.mobileNumbers}}"></paper-textarea>
-
-              <!-- Notes -->
-              <paper-textarea label="Notes" class="flex" value="{{event.notes}}"></paper-textarea>
+                              value="{{event.managers.mobiles}}"></paper-textarea>
 
             </div>
 
@@ -135,9 +132,8 @@
               rounds: [],
               managers: {
                 names: '',
-                mobileNumbers: ''
-              },
-              notes: ''
+                mobiles: ''
+              }
             }
           }
         }
@@ -146,19 +142,18 @@
       _submitHandler: function () {
         var events = JSON.parse(localStorage.getItem('events') || '[]'),
           names = this.event.managers.names.split('\n'),
-          mobileNumbers = this.event.managers.mobileNumbers.split('\n');
+          mobiles = this.event.managers.mobiles.split('\n');
 
         events.push({
           name: this.event.name,
           participants: this.event.participants,
           fees: this.event.fees,
           description: this.event.description,
-          prizes: this.event.prizes.split(','),
-          rounds: [],
+          prizes: this.event.prizes ? this.event.prizes.split(',') : [],
+          rounds: this.event.rounds,
           managers: names.map(function (name, index) {
-            return {name: name, mobileNumber: mobileNumbers[index]}
-          }),
-          notes: this.event.notes
+            return {name: name, mobile: mobiles[index]}
+          })
         });
         localStorage.setItem('events', JSON.stringify(events));
         this._resetHandler();
@@ -174,18 +169,19 @@
           rounds: [],
           managers: {
             names: '',
-            mobileNumbers: ''
-          },
-          notes: ''
-        })
+            mobiles: ''
+          }
+        });
+        this.$.name.focus()
       }
 
     });
 
-    window.downloadEventData = function () {
+    window.downloadEventData = function (filename) {
       var a = document.createElement('a');
-      a.download = 'events.json';
-      a.href = 'data://text/json;charset=utf-8,' + encodeURIComponent(localStorage.getItem('events'));
+      a.download = (filename || 'events') + '.json';
+      a.href = 'data://text/json;charset=utf-8,' +
+        encodeURIComponent(JSON.stringify(JSON.parse(localStorage.getItem('events')), null, 2));
       a.click();
     };
 
